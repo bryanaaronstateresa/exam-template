@@ -21,17 +21,17 @@ export class UsersService {
 
   async createUser(createUserInput: CreateUserInput) {
     const userExist = await this.userRepository.findOne({
-      where: { email: createUserInput.email },
+      where: { email: createUserInput.email.toLowerCase() },
     });
 
     if (userExist) {
       throw new BadRequestException('user.USER_ALREADY_REGISTERED');
     }
 
-    const createdUser = await this.userRepository.save({
+    return await this.userRepository.save({
       email: createUserInput.email.toLowerCase(),
       password: await this.hashPassword(createUserInput.password),
     });
-    return this.userRepository.findOne({ where: { id: createdUser.id } });
+   
   }
 }
